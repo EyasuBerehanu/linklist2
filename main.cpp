@@ -14,71 +14,77 @@ using namespace std;
 
 
 void add(Node*& head); //calls the add function so it can be read in the int main
-void print(Node*& head); //calls the print funtion so it can be read in the int main 
-void deletee(Node*& head); //calls the delete funtion so it can be read in the int main (I called it deletee because delete dont work)
+//void print(Node*& head); //calls the print funtion so it can be read in the int main 
+//void deletee(Node*& head); //calls the delete funtion so it can be read in the int main (I called it deletee because delete dont work)
 
 int main() {
-  Node* head = nullptr; 
-    string input;
+    char input[80];
+    bool running = true;
+    Node* head = nullptr;
+
     bool start = true;
 
-    while (start = true) { //while true it will ask this prompt, only quit will make it false
+    while (start = true) { 
         cout << "Enter ADD, PRINT, DELETE, or QUIT " << endl;
-        cin >> input;
+        cin.getline(input, 80, '\n');
 
-        if (input == "ADD") {
-            add(head);
-        } else if (input == "PRINT") {
+        if (strcmp(input, "ADD") == 0) {
+            char names[80];
+            cout << "Enter name: " << endl;;
+            cin.getline(input, 80, '\n');
+            strcpy(names, input);
+
+            double gpa;
+            int id;
+            int x;
+            double y;
+            cout << "Enter ID: " << endl;
+            cin >> x;
+            id = x;
+
+            cout << "Enter GPA: " << endl;
+            cin >> y;
+            gpa = y;
+
+    
+            student* tempSt = new student(id, gpa, names);
+            add(head, head, tempSt);
+        } else if (strcmp(input, "PRINT") == 0) {
             print(head);
-        } else if (input == "DELETE") {
-            deletee(head);
-        } else if (input == "QUIT") {
-            return false; 
-	} else {
-	  cout << "invalid" << endl;
-	}
+        } else if (strcmp(input, "DELETE") == 0) {
+            cout << "Enter ID to delete: " << endl;
+            cin.getline(input, 80, '\n');
+            deleteNode(head, head, atoi(input));
+        } else if (strcmp(input, "QUIT") == 0) {
+            running = false;
+        } else {
+            //cout << "Invalid please try again." << endl;
+        }
     }
+
     return 0;
 }
 
-void add(Node*& head) {
-    int id;
-    double gpa;
-    char firstName[25], lastName[25];
+void add(Node*& head, int n, double g, const char* names) {
+   add(head->getNext(), n, g, names);
+}
 
-    cout << "Enter first name: ";
-    cin >> firstName;
-    cout << "Enter last name: ";
-    cin >> lastName;
-    cout << "Enter student ID: ";
-    cin >> id;
-    cout << "Enter GPA: ";
-    cin >> gpa;
-
-    Student* newStudent = new Student(id, gpa, firstName, lastName);
-    Node* newNode = new Node(newStudent);
-
+// Function to print all the students
+void print(Node* head) {
     if (head == nullptr) {
-        head = newNode;
-    } else if (head->getStudent()->getID() > newStudent->getID()) {
-        newNode->setNext(head);
-        head = newNode;
-    } else {
-        add(head->getNext());
+        return;  // Base case: If the list is empty, just return
     }
+
+    // Print the data of the current student
+    cout << "Name: " << head->getStudent()->getName() << ", ";
+    cout << "Student ID: " << head->getStudent()->getID() << ", ";
+    cout << "GPA: " << head->getStudent()->getGpa() << endl;
+
+    // Recursive call to print the rest of the list
+    print(head->getNext());
 }
 
-
-void print(vector<Student>& student) { //prints out all inputed stuent info by users
-    
-    for (int i = 0; i < student.size(); ++i) { 
-        float roundedGPA = round(student[i].gpa * 100) / 100;
-        cout << student[i].firstName << " " << student[i].lastName << ", " << student[i].id << ", " << roundedGPA << endl;
-    
-    }
-}
-
-
+/*
 void deletee(Node*& head) { //Deletes inputs based on the corresponding ID
     int deleteId = 0;
     
@@ -95,3 +101,4 @@ void deletee(Node*& head) { //Deletes inputs based on the corresponding ID
 
     cout << "ID not found." << endl;
 }
+*/
