@@ -7,24 +7,18 @@
 #include <cstring>
 #include <vector> 
 #include <cmath> //allows me to round the gpa variable
+#include "head.h"
+#include "student.h"
 
 using namespace std;
 
-struct Student;
 
-void add(vector<Student>& students); //calls the add function so it can be read in the int main
-void print(vector<Student>& students); //calls the print funtion so it can be read in the int main 
-void deletee(vector<Student>& students); //calls the delete funtion so it can be read in the int main (I called it deletee because delete dont work)
-
-struct Student { //creats a struct containing all student related info
-    char firstName[80];
-    char lastName[80];
-    int id;
-    float gpa;
-};
+void add(Node*& head); //calls the add function so it can be read in the int main
+void print(Node*& head); //calls the print funtion so it can be read in the int main 
+void deletee(Node*& head); //calls the delete funtion so it can be read in the int main (I called it deletee because delete dont work)
 
 int main() {
-    vector<Student> students; 
+  Node* head = nullptr; 
     string input;
     bool start = true;
 
@@ -33,43 +27,45 @@ int main() {
         cin >> input;
 
         if (input == "ADD") {
-            add(students);
+            add(head);
         } else if (input == "PRINT") {
-            print(students);
+            print(head);
         } else if (input == "DELETE") {
-            deletee(students);
+            deletee(head);
         } else if (input == "QUIT") {
             return false; 
 	} else {
-            cout << "invalid input try again" << endl;
-        }
+	  cout << "invalid" << endl;
+	}
     }
-
     return 0;
 }
 
-void add(vector<Student>& students) { //when you say ADD it asks for you to input all the student info lik name id and gpa
-    Student nerd; 
+void add(Node*& head) {
+    int id;
+    double gpa;
+    char firstName[25], lastName[25];
 
-    cout << "Enter First Name: " << endl;
-    cin >> nerd.firstName;
+    cout << "Enter first name: ";
+    cin >> firstName;
+    cout << "Enter last name: ";
+    cin >> lastName;
+    cout << "Enter student ID: ";
+    cin >> id;
+    cout << "Enter GPA: ";
+    cin >> gpa;
 
-    cout << "Enter Last Name: " << endl;
-    cin >> nerd.lastName;
-    
-    cout << "Enter ID (Like 123456): " << endl;
-    cin >> nerd.id;
-    
-    cout << "Enter GPA (num should be from 0 to 4 range): " << endl;
-    cin >> nerd.gpa;
-    
-    while (nerd.gpa > 4.0) {  //make sure gpa dosnt go higher then 4.0
-        cout << "Gpa should be from 0 - 4: " << endl;
-        cin >> nerd.gpa;
+    Student* newStudent = new Student(id, gpa, firstName, lastName);
+    Node* newNode = new Node(newStudent);
+
+    if (head == nullptr) {
+        head = newNode;
+    } else if (head->getStudent()->getID() > newStudent->getID()) {
+        newNode->setNext(head);
+        head = newNode;
+    } else {
+        add(head->getNext());
     }
-    
-
-    students.push_back(nerd); //puts incerted info into the back
 }
 
 
@@ -82,7 +78,8 @@ void print(vector<Student>& student) { //prints out all inputed stuent info by u
     }
 }
 
-void deletee(vector<Student>& students) { //Deletes inputs based on the corresponding ID
+
+void deletee(Node*& head) { //Deletes inputs based on the corresponding ID
     int deleteId = 0;
     
     cout << "Enter student ID to delete: ";
