@@ -6,7 +6,8 @@
 #include <iostream>
 #include <cstring>
 #include <vector> 
-#include <cmath> //allows me to round the gpa variable
+#include <cmath>
+#include <iomanip> //allows me to round the gpa variable
 #include "head.h"
 #include "student.h"
 
@@ -14,8 +15,8 @@ using namespace std;
 
 
 void add(Node*& head, Node* current, student* newStudent); //calls the add function so it can be read in the int main
-//void print(Node*& head); //calls the print funtion so it can be read in the int main 
-//void deletee(Node*& head); //calls the delete funtion so it can be read in the int main (I called it deletee because delete dont work)
+void print(Node* next); //calls the print funtion so it can be read in the int main 
+void deletee(Node*& head, Node* current, int id); //calls the delete funtion so it can be read in the int main (I called it deletee because delete dont work)
 
 int main() {
     char input[80];
@@ -54,9 +55,9 @@ int main() {
         } else if (strcmp(input, "DELETE") == 0) {
             cout << "Enter ID to delete: " << endl;
             cin.getline(input, 80, '\n');
-            deleteNode(head, head, atoi(input));
+            deletee(head, head, atoi(input));
         } else if (strcmp(input, "QUIT") == 0) {
-            running = false;
+	  return 0;
         } else {
             //cout << "Invalid please try again." << endl;
         }
@@ -89,36 +90,39 @@ void add(Node*& head, Node* current, student* newStudent) {
     }
 }
 
-// Function to print all the students
-void print(Node* head) {
-    if (head == nullptr) {
-        return;  
+void print(Node* next) {
+    if (next == nullptr) {
+        cout << "No students in list" << endl;
+        return;
     }
 
-    // Print the data of the current student
-    cout << "Name: " << head->getStudent()->getName() << ", ";
-    cout << "Student ID: " << head->getStudent()->getID() << ", ";
-    cout << "GPA: " << head->getStudent()->getGpa() << endl;
+    cout << fixed << setprecision(2);
+    next->getStudent()->printData();
 
-    // Recursive call to print the rest of the list
-    print(head->getNext());
+    print(next->getNext());
 }
 
-/*
-void deletee(Node*& head) { //Deletes inputs based on the corresponding ID
-    int deleteId = 0;
-    
-    cout << "Enter student ID to delete: ";
-    cin >> deleteId;
-
-    for (int i = 0; i < students.size(); ++i) { //makes sure every element is accounted for
-        if (students[i].id == deleteId) {
-	  students.erase(students.begin() + i); //removes elemnts from vector
-            cout << "ID " << deleteId << " deleted." << endl;
-            return;  
-        }
+void deletee(Node*& head, Node* current, int id) {
+    if (current == nullptr) {
+        cout << "Student with ID " << id << " not found." << endl;
+        return;
     }
 
-    cout << "ID not found." << endl;
+    if (current == head && current->getStudent()->getID() == id) {
+        Node* temp = head;
+        head = head->getNext();
+        delete temp;
+        cout << "Student with ID " << id << " deleted." << endl;
+        return;
+    }
+
+    if (current->getNext() != nullptr && current->getNext()->getStudent()->getID() == id) {
+        Node* temp = current->getNext();
+        current->setNext(temp->getNext());
+        delete temp;
+        cout << "Student with ID " << id << " deleted." << endl;
+        return;
+    }
+
+    deletee(head, current->getNext(), id);
 }
-*/
