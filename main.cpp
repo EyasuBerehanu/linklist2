@@ -13,7 +13,7 @@
 using namespace std;
 
 
-void add(Node*& head); //calls the add function so it can be read in the int main
+void add(Node*& head, Node* current, student* newStudent); //calls the add function so it can be read in the int main
 //void print(Node*& head); //calls the print funtion so it can be read in the int main 
 //void deletee(Node*& head); //calls the delete funtion so it can be read in the int main (I called it deletee because delete dont work)
 
@@ -65,14 +65,34 @@ int main() {
     return 0;
 }
 
-void add(Node*& head, int n, double g, const char* names) {
-   add(head->getNext(), n, g, names);
+void add(Node*& head, Node* current, student* newStudent) {
+    if (head == nullptr) {
+        head = new Node();
+        head->setStudent(newStudent);
+        head->setNext(nullptr);
+    } else if (current == nullptr || current->getStudent()->getID() > newStudent->getID()) {
+        Node* newNode = new Node();
+        newNode->setStudent(newStudent);
+        newNode->setNext(current);
+
+        if (current == head) {
+            head = newNode;
+        } else {
+            Node* temp = head;
+            while (temp->getNext() != current) {
+                temp = temp->getNext();
+            }
+            temp->setNext(newNode);
+        }
+    } else {
+        add(head, current->getNext(), newStudent);
+    }
 }
 
 // Function to print all the students
 void print(Node* head) {
     if (head == nullptr) {
-        return;  // Base case: If the list is empty, just return
+        return;  
     }
 
     // Print the data of the current student
