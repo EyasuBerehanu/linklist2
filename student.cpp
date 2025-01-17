@@ -28,5 +28,5 @@ void student::setGpa(double n){
 void student::printData(){
   cout<< "student name: "<<name<<endl;
   cout<< "student id: "<< Id<<endl;
-  cout<< "student GPA: "<< GPA<<endl;
+  //cout<< "student GPA: "<< GPA<<endl; commented out cuz used more better in main
 };

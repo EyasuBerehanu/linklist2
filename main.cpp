@@ -1,128 +1,147 @@
 //Eyasu Berehanu
-//12/25/2024
-//This program ask for student info and you can add it in this game, print all the info as you can add mutiple student info, and delete info when certin id is imputed, you can also quit the list
-//Help from: https: (erases vector)//www.geeksforgeeks.org/vector-erase-and-clear-in-cpp/
-//(what is a vector) https://www.youtube.com/watch?v=Cq1h1KPoGBU&t=883s&ab_channel
-#include <iostream>
-#include <cstring>
-#include <vector> 
-#include <cmath>
-#include <iomanip> //allows me to round the gpa variable
-#include "head.h"
-#include "student.h"
+//1/16/2025 (cutting it close!?)
+//Note: my node.cpp and node.h were named head.h and head.cpp by zach so just a heads up
+//Sources used: For recurtion stuff, https://www.geeksforgeeks.org/recursive-insertion-and-traversal-linked-list/, (Delete a linked list using recursion | GeeksforGeeks) https://www.youtube.com/watch?v=4fyh_ddRyRE
+//Atoi and stoi https://www.geeksforgeeks.org/convert-string-to-int-in-cpp/
+//inserting nodes https://www.youtube.com/watch?app=desktop&v=RNMIDj62o_o&t=249s https://www.geeksforgeeks.org/cpp-program-for-inserting-a-node-in-a-linked-list/
+//setting precision stuff https://stackoverflow.com/questions/5907031/printing-the-correct-number-of-decimal-places-with-cout
+#include <iostream>  
+#include <cstring>   
+#include <iomanip>   // For setting precision
+#include "student.h" 
+#include "head.h"    
 
-using namespace std;
+using namespace std; 
 
-
-void add(Node*& head, Node* current, student* newStudent); //calls the add function so it can be read in the int main
-void print(Node* next); //calls the print funtion so it can be read in the int main 
-void deletee(Node*& head, Node* current, int id); //calls the delete funtion so it can be read in the int main (I called it deletee because delete dont work)
+void add(Node*& head, Node* current, student* newStudent); 
+void print(Node* next);                                   
+void deletee(Node*& head, Node* current, int id);      
+void average(Node* next, double& GPA, int& count);       
 
 int main() {
-    char input[80];
-    bool running = true;
-    Node* head = nullptr;
+    char input[80];        
+    bool start = true;   
+    Node* head = nullptr;   //starts head of linked list to null
 
-    bool start = true;
 
-    while (start = true) { 
-        cout << "Enter ADD, PRINT, DELETE, or QUIT " << endl;
-        cin.getline(input, 80, '\n');
+    while (start = true) {
+        cout << "Enter ADD, PRINT, DELETE, AVERAGE, or QUIT: " << endl; 
+        cin.getline(input, 80, '\n'); 
 
-        if (strcmp(input, "ADD") == 0) {
-            char names[80];
-            cout << "Enter name: " << endl;;
-            cin.getline(input, 80, '\n');
-            strcpy(names, input);
+        if (strcmp(input, "ADD") == 0) { 
+            char names[80];              
+            cout << "Enter name: " << endl;
+            cin.getline(input, 80, '\n'); // gets the student's name and copys input to  names
+            strcpy(names, input);         
 
-            double gpa;
-            int id;
-            int x;
-            double y;
+            double gpa;  
+            int id;     
             cout << "Enter ID: " << endl;
-            cin >> x;
-            id = x;
+            cin >> id;  
 
             cout << "Enter GPA: " << endl;
-            cin >> y;
-            gpa = y;
+            cin >> gpa;          
+            cin.ignore();       
 
-    
-            student* tempSt = new student(id, gpa, names);
-            add(head, head, tempSt);
-        } else if (strcmp(input, "PRINT") == 0) {
-            print(head);
-        } else if (strcmp(input, "DELETE") == 0) {
+            student* temp = new student(id, gpa, names); //new student object with all 3 variables/charateristics
+            add(head, head, temp); //adds student to linked list
+
+        } else if (strcmp(input, "PRINT") == 0) { 
+            print(head); 
+
+        } else if (strcmp(input, "DELETE") == 0) { 
             cout << "Enter ID to delete: " << endl;
-            cin.getline(input, 80, '\n');
-            deletee(head, head, atoi(input));
-        } else if (strcmp(input, "QUIT") == 0) {
-	  return 0;
+            cin.getline(input, 80, '\n'); 
+            deletee(head, head, atoi(input)); // ATOI convers string to interger so what this does it changes the inputed thing to and integer then deletes student
+
+        } else if (strcmp(input, "AVERAGE") == 0) { 
+            double GPA = 0.0; 
+            int count = 0;    
+            average(head, GPA, count); // calculates the avarage GPA also amount of students as its need for calculation
+
+            if (count > 0) { 
+                cout << "Average GPA: " << fixed << setprecision(2) << GPA / count << endl; // print average GPA
+           
+            }
+
+        } else if (strcmp(input, "QUIT") == 0) { 
+            return 0; 
         } else {
-            //cout << "Invalid please try again." << endl;
+            cout << "Invalid command." << endl; 
         }
     }
 
-    return 0;
+    return 0; 
 }
 
-void add(Node*& head, Node* current, student* newStudent) {
-    if (head == nullptr) {
-        head = new Node();
-        head->setStudent(newStudent);
-        head->setNext(nullptr);
-    } else if (current == nullptr || current->getStudent()->getID() > newStudent->getID()) {
-        Node* newNode = new Node();
-        newNode->setStudent(newStudent);
-        newNode->setNext(current);
+void add(Node*& head, Node* current, student* newStudent) { // add a student to the linked list
+    if (head == nullptr) { 
+        head = new Node(); 
+        head->setStudent(newStudent); // sets student in new node
+        head->setNext(nullptr); 
+    } else if (current == nullptr || current->getStudent()->getID() > newStudent->getID()) {// basically when current position = null or current ID is larger than new ID
+        Node* newNode = new Node(); 
+        newNode->setStudent(newStudent); //we point the new node to new student when the new student is smaller the the current one
+        newNode->setNext(current); //then  the new node to point to the the current node
 
-        if (current == head) {
-            head = newNode;
-        } else {
+        if (current == head) { 
+            head = newNode; 
+        } else { 
             Node* temp = head;
-            while (temp->getNext() != current) {
+            while (temp->getNext() != current) { // move through the link list to get previous node
                 temp = temp->getNext();
             }
-            temp->setNext(newNode);
+            temp->setNext(newNode); // Update the next pointer of the previous node
         }
     } else {
-        add(head, current->getNext(), newStudent);
+        add(head, current->getNext(), newStudent); // use recurtion to call add again for the next node insted of using a for loop or other iterator
     }
 }
 
-void print(Node* next) {
+
+void print(Node* next) { // print all students in the linked list
+    if (next == nullptr) { 
+        return;
+    }
+
+    cout << fixed << setprecision(2); // used somthing called set precision so this changes it to 2 decimal spots in the output
+    next->getStudent()->printData(); 
+    cout << "GPA: " << next->getStudent()->getGpa() << endl; // Print the GPA (i commented out the gpa in the student.cpp so it wouldnt double)
+
+    print(next->getNext()); // uses recurtion to call print for next node in link list
+}
+
+
+void deletee(Node*& head, Node* current, int id) { // Delete a student by ID
+    if (current == nullptr) { 
+        cout << "Student ID not found." << endl; 
+        return;
+    }
+
+    if (current == head && current->getStudent()->getID() == id) { // if the student chossen to delete is at the head/start of list
+        Node* temp = head; // store the head node in a node* temp 
+        head = head->getNext(); //then changes the head to the next node
+        delete temp; //and then it deletes the head node stored in temp so then new head node is the next
+        return;
+    }
+
+    if (current->getNext() != nullptr && current->getNext()->getStudent()->getID() == id) { // If next node contains the student that we ided to delete it baasically does the temp process like eailer but with next pointer
+        Node* temp = current->getNext(); 
+        current->setNext(temp->getNext()); 
+        delete temp; 
+        return;
+    }
+
+    deletee(head, current->getNext(), id); // uses recurtion to use deleteNode again for the next node
+}
+
+void average(Node* next, double& GPA, int& count) {  // calculate the average GPA of all students
     if (next == nullptr) {
-        cout << "No students in list" << endl;
         return;
     }
 
-    cout << fixed << setprecision(2);
-    next->getStudent()->printData();
+    GPA += next->getStudent()->getGpa(); 
+    count++; 
 
-    print(next->getNext());
-}
-
-void deletee(Node*& head, Node* current, int id) {
-    if (current == nullptr) {
-        cout << "Student with ID " << id << " not found." << endl;
-        return;
-    }
-
-    if (current == head && current->getStudent()->getID() == id) {
-        Node* temp = head;
-        head = head->getNext();
-        delete temp;
-        cout << "Student with ID " << id << " deleted." << endl;
-        return;
-    }
-
-    if (current->getNext() != nullptr && current->getNext()->getStudent()->getID() == id) {
-        Node* temp = current->getNext();
-        current->setNext(temp->getNext());
-        delete temp;
-        cout << "Student with ID " << id << " deleted." << endl;
-        return;
-    }
-
-    deletee(head, current->getNext(), id);
+    average(next->getNext(), GPA, count); 
 }
